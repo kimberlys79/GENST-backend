@@ -12,9 +12,8 @@ app.use(router);
 
 app.use('/assets', express.static('public/images'))
 
-// Root Route
-app.get('/', (req, res) => {
-    res.send("Welcome to Genset Inspection System API");
+app.get('/ping', (req, res) => {
+    res.status(200).send('pong');
 });
 
 app.use((err, req, res, next) => {
