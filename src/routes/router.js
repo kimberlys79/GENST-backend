@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const generatorRoutes = require('./generator');
-const userRoutes = require('./user').default;
+const userRoutes = require('./user');
 const notificationRoutes = require('./notification');
 const reportRoutes = require('./report');
 
