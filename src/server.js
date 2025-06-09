@@ -1,5 +1,7 @@
 require("dotenv").config()
 
+console.log("ENV Loaded. DB_HOST=", process.env.DB_HOST);
+
 const app = require("./app")
 const PORT = process.env.PORT || 4000
 
