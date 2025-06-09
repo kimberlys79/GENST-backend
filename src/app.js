@@ -1,6 +1,6 @@
-const express = require('express');
+const express = required('express');
 const app = express();
-const router = require('./routes/router');
+const router = required('./routes/router');
 const middlewareLogRequest = require('./middleware/logs');
 
 app.use(express.json());
