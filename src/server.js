@@ -1,4 +1,4 @@
-required("dotenv").config()
+require("dotenv").config()
 
 console.log("ENV Loaded. DB_HOST=", process.env.DB_HOST);
 

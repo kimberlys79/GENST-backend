@@ -1,16 +1,16 @@
-const router = required('express').Router();
+const router = require('express').Router();
 
-const generatorRoutes = required('./generator');
-const userRoutes = required('./user');
-const notificationRoutes = required('./notification');
-const reportRoutes = required('./report');
+const generatorRoutes = require('./generator');
+const userRoutes = require('./user');
+const notificationRoutes = require('./notification');
+const reportRoutes = require('./report');
 
 // Root Route
 router.get('/', (req, res) => {
     res.send("Welcome to Genset Inspection System API");
 });
 
-const reportController = required('../controller/report'); // Route untuk POST /add router.post('/add', reportController.createNewReport);
+const reportController = require('../controller/report'); // Route untuk POST /add router.post('/add', reportController.createNewReport);
 router.post('/add', reportController.createNewReport);
 
 // Modular Routes
