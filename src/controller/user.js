@@ -95,7 +95,7 @@ const loginUser = async (req, res) => {
     try { 
         const [user] = await UserModel.findUserByEmail(email); 
 
-        if(!user || user.Length === 0) {
+        if(!user || user.length === 0) {
             return response(401, {loginResult: null}, "Invalid Email", res)
         }
 
