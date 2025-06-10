@@ -49,7 +49,8 @@ const createNewUser = async (req, res) => {
             newUser: {
                 name: newUser.name,
                 badge_number: newUser.badge_number,
-                email: newUser.email
+                email: newUser.email,
+                password: newUser.password
             }
         }, null, res);
 
