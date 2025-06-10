@@ -109,9 +109,9 @@ const loginUser = async (req, res) => {
             return response(401, { loginResult: null }, "Wrong Password", res);
          }
 
-        const token = generateToken({ badge_number: userLogin.badge_number, email: userLogin.email, password: userLogin.password }); 
+        const token = generateToken({ id: userLogin.user_id, badge_number: userLogin.badge_number, email: userLogin.email, password: userLogin.password }); 
 
-        return response(200, {loginResult: { token, badgeNumber, email}}, 'Login User Success', res) 
+        return response(200, {loginResult: { id: userLogin.user_id, token, badge_number, email, }}, 'Login User Success', res) 
     } catch (error) { 
         console.error('LOGIN USER ERROR:', error);
         response(500, { error: error.message }, "Server Error", res); } 
