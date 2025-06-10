@@ -14,7 +14,7 @@ const getUserDetail = (idUser) => {
 
 const createNewUser = (body) => {
     const SQLQuery = `INSERT INTO user (name, badge_number, email, password) 
-    VALUES ('${body.name}', '${badge_number}', '${body.email}', '${body.password}')`
+    VALUES ('${body.name}', '${body.badge_number}', '${body.email}', '${body.password}')`
 
     return dbPool.execute(SQLQuery);                    
 }
