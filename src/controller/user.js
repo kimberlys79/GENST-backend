@@ -104,14 +104,14 @@ const loginUser = async (req, res) => {
         console.log(userLogin)
 
          // VALIDASI PASSWORD (aktifkan jika comparePassword sudah OK)
-        // const isPasswordValid = comparePassword(password, userLogin.password);
-        // if (!isPasswordValid) {
-        //     return response(401, { loginResult: null }, "Wrong Password", res);
-        // }
+         const isPasswordValid = comparePassword(password, userLogin.password);
+         if (!isPasswordValid) {
+            return response(401, { loginResult: null }, "Wrong Password", res);
+         }
 
-        const token = generateToken({ id: userLogin.id, badge_number: userLogin.badge_number, email: userLogin.email, password: userLogin.password }); 
+        const token = generateToken({ badge_number: userLogin.badge_number, email: userLogin.email, password: userLogin.password }); 
 
-        return response(200, {loginResult: {id, token, badgeNumber, email}}, 'Login User Success', res) 
+        return response(200, {loginResult: { token, badgeNumber, email}}, 'Login User Success', res) 
     } catch (error) { 
         console.error('LOGIN USER ERROR:', error);
         response(500, { error: error.message }, "Server Error", res); } 
