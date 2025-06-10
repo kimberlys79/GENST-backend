@@ -16,14 +16,4 @@ app.get('/ping', (req, res) => {
     res.status(200).send('pong');
 });
 
-app.use((err, req, res, next) => {
-    console.error('GLOBAL ERROR:', err); // supaya log keluar ke Railway
-    res.status(500).json({
-        statusCode: 500,
-        message: 'Internal Server Error',
-        error: err.message || err
-    });
-});
-
-
 module.exports = app
