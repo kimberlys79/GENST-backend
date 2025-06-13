@@ -111,7 +111,7 @@ const loginUser = async (req, res) => {
 
         const token = generateToken({ id: userLogin.user_id, badge_number: userLogin.badge_number, email: userLogin.email, password: userLogin.password }); 
 
-        return response(200, {loginResult: { id: userLogin.user_id, token, badge_number, email, }}, 'Login User Success', res) 
+        return response(200, {loginResult: { id: userLogin.user_id, token, email, badge_number }}, 'Login User Success', res) 
     } catch (error) { 
         console.error('LOGIN USER ERROR:', error);
         response(500, { error: error.message }, "Server Error", res); } 

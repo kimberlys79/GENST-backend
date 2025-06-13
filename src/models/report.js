@@ -64,7 +64,7 @@ const createNewReport = async (body) => {
     try {
         await connection.beginTransaction();
 
-        // 1️⃣ Insert ke report
+        // Insert ke report
         const [reportResult] = await connection.execute(
             `INSERT INTO report 
                 (fuel_generator, radiator_water, fuel_pump, upload_photo, generator_safe_to_operate, 
@@ -86,21 +86,21 @@ const createNewReport = async (body) => {
 
         const reportId = reportResult.insertId;
 
-        // 2️⃣ Lock Engine
+        // Lock Engine
         await connection.execute(
             `INSERT INTO lock_engine (lock_engine_condition, lock_engine_description, fk_report_lock_engine_id)
              VALUES (?, ?, ?)`,
             [body.lock_engine_condition ?? null, body.lock_engine_description ?? null, reportId]
         );
 
-        // 3️⃣ Circuit Breaker
+        // Circuit Breaker
         await connection.execute(
             `INSERT INTO circuit_breaker (circuit_breaker_condition, circuit_breaker_description, fk_report_circuit_breaker_id)
              VALUES (?, ?, ?)`,
             [body.circuit_breaker_condition ?? null, body.circuit_breaker_description ?? null, reportId]
         );
 
-        // 4️⃣ Oil Generator
+        // Oil Generator
         await connection.execute(
             `INSERT INTO oil_generator 
                 (oil_generator_level_condition, oil_generator_level_description, 
@@ -115,7 +115,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // 5️⃣ Voltmeter
+        // Voltmeter
         await connection.execute(
             `INSERT INTO voltmeter (voltmeter_br, voltmeter_yb, voltmeter_ry, voltmeter_rn, voltmeter_yn, voltmeter_bn, voltmeter_description, fk_report_voltmeter_id)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -131,7 +131,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // 6️⃣ Duty Selector
+        // Duty Selector
         await connection.execute(
             `INSERT INTO duty_selector (duty_selector_br, duty_selector_yb, duty_selector_ry, duty_selector_rn, duty_selector_yn, duty_selector_bn, duty_selector_description, fk_report_duty_selector_id)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -147,7 +147,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // 7️⃣ Ammeter
+        // Ammeter
         await connection.execute(
             `INSERT INTO ammeter (ammeter_br, ammeter_yb, ammeter_ry, ammeter_rn, ammeter_yn, ammeter_bn, ammeter_description, fk_report_ammeter_id)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -163,7 +163,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // 8️⃣ Battery Charger
+        // Battery Charger
         await connection.execute(
             `INSERT INTO battery_charger 
                 (battery_charger_condition, battery_charger_br, battery_charger_yb, battery_charger_ry, 
@@ -182,7 +182,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // 9️⃣ ECU
+        // ECU
         await connection.execute(
             `INSERT INTO ecu (ecu_condition, ecu_description, fk_report_ecu_id)
              VALUES (?, ?, ?)`,
@@ -193,7 +193,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // 🔟 Battery
+        //  Battery
         await connection.execute(
             `INSERT INTO battery (battery_condition, battery_description, fk_report_battery_id)
              VALUES (?, ?, ?)`,
@@ -204,7 +204,7 @@ const createNewReport = async (body) => {
             ]
         );
 
-        // ✅ Commit transaksi
+        // Commit transaksi
         await connection.commit();
         connection.release();
 
