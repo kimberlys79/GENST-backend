@@ -7,7 +7,7 @@ const getAllNotification = () => {
 }
 
 const getNotificationDetail = (idNotification) => {
-    const sqlQuery = ` SELECT * FROM notification WHERE notification_id='${idNotification}'`
+    const sqlQuery = ` SELECT * FROM notification WHERE notification_id = ?`
     
     return dbPool.execute(sqlQuery, [idNotification])
 }

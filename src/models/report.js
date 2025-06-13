@@ -58,39 +58,165 @@ const getReportDetail = (idReport) => {
     return dbPool.execute(sqlQuery, [idReport]);
 }
 
-const createNewReport = (body) => {
-    const sqlQuery = `  INSERT INTO report (fuel_generator, radiator_water, fuel_pump, 
-                        upload_photo, generator_safe_to_operate, overall_condition, inspector_sign,
-                        week_maintenance_by_mem, fk_user_report_id, fk_generator_report_id)
-                        VALUES ('${body.fuel_generator}', '${body.radiator_water}',
-                        '${body.fuel_pump}', '${body.upload_photo}', '${body.generator_safe_to_operate}', 
-                        '${body.overall_condition}', '${body.inspector_sign}', '${body. week_maintenance_by_mem}',
-                        '${body.fk_user_report_id}', '${body.fk_generator_report_id}')`;
+const createNewReport = async (body) => {
+    const connection = await dbPool.getConnection();
 
-                        const values = [
-                            body.fuel_generator ?? null,
-                            body.radiator_water ?? null,
-                            body.fuel_pump ?? null,
-                            body.upload_photo ?? null,
-                            body.generator_safe_to_operate ?? null,
-                            body.overall_condition ?? null,
-                            body.inspector_sign ?? null,
-                            Number.isInteger(Number(body.week_maintenance_by_mem))
-                                ? Number(body.week_maintenance_by_mem)
-                                : null,
-                            body.fk_user_report_id ?? null,
-                            body.fk_generator_report_id ?? null
-                        ];
+    try {
+        await connection.beginTransaction();
 
-    console.log('Values:', values);
+        // 1️⃣ Insert ke report
+        const [reportResult] = await connection.execute(
+            `INSERT INTO report 
+                (fuel_generator, radiator_water, fuel_pump, upload_photo, generator_safe_to_operate, 
+                 overall_condition, inspector_sign, week_maintenance_by_mem, fk_user_report_id, fk_generator_report_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                body.fuel_generator ?? null,
+                body.radiator_water ?? null,
+                body.fuel_pump ?? null,
+                body.upload_photo ?? null,
+                body.generator_safe_to_operate ?? null,
+                body.overall_condition ?? null,
+                body.inspector_sign ?? null,
+                Number.isInteger(Number(body.week_maintenance_by_mem)) ? Number(body.week_maintenance_by_mem) : null,
+                body.fk_user_report_id ?? null,
+                body.fk_generator_report_id ?? null
+            ]
+        );
 
-    values.forEach((value, index) => { 
-        if (value === undefined) { 
-            throw new Error(`Undefined value found at index ${index} in request creation`); 
-        } 
-    }); 
-        return dbPool.execute(sqlQuery, values);
+        const reportId = reportResult.insertId;
+
+        // 2️⃣ Lock Engine
+        await connection.execute(
+            `INSERT INTO lock_engine (lock_engine_condition, lock_engine_description, fk_report_lock_engine_id)
+             VALUES (?, ?, ?)`,
+            [body.lock_engine_condition ?? null, body.lock_engine_description ?? null, reportId]
+        );
+
+        // 3️⃣ Circuit Breaker
+        await connection.execute(
+            `INSERT INTO circuit_breaker (circuit_breaker_condition, circuit_breaker_description, fk_report_circuit_breaker_id)
+             VALUES (?, ?, ?)`,
+            [body.circuit_breaker_condition ?? null, body.circuit_breaker_description ?? null, reportId]
+        );
+
+        // 4️⃣ Oil Generator
+        await connection.execute(
+            `INSERT INTO oil_generator 
+                (oil_generator_level_condition, oil_generator_level_description, 
+                 oil_generator_color_condition, oil_generator_color_description, fk_report_oil_generator_id)
+             VALUES (?, ?, ?, ?, ?)`,
+            [
+                body.oil_generator_level_condition ?? null,
+                body.oil_generator_level_description ?? null,
+                body.oil_generator_color_condition ?? null,
+                body.oil_generator_color_description ?? null,
+                reportId
+            ]
+        );
+
+        // 5️⃣ Voltmeter
+        await connection.execute(
+            `INSERT INTO voltmeter (voltmeter_br, voltmeter_yb, voltmeter_ry, voltmeter_rn, voltmeter_yn, voltmeter_bn, voltmeter_description, fk_report_voltmeter_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                body.voltmeter_br ?? null,
+                body.voltmeter_yb ?? null,
+                body.voltmeter_ry ?? null,
+                body.voltmeter_rn ?? null,
+                body.voltmeter_yn ?? null,
+                body.voltmeter_bn ?? null,
+                body.voltmeter_description ?? null,
+                reportId
+            ]
+        );
+
+        // 6️⃣ Duty Selector
+        await connection.execute(
+            `INSERT INTO duty_selector (duty_selector_br, duty_selector_yb, duty_selector_ry, duty_selector_rn, duty_selector_yn, duty_selector_bn, duty_selector_description, fk_report_duty_selector_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                body.duty_selector_br ?? null,
+                body.duty_selector_yb ?? null,
+                body.duty_selector_ry ?? null,
+                body.duty_selector_rn ?? null,
+                body.duty_selector_yn ?? null,
+                body.duty_selector_bn ?? null,
+                body.duty_selector_description ?? null,
+                reportId
+            ]
+        );
+
+        // 7️⃣ Ammeter
+        await connection.execute(
+            `INSERT INTO ammeter (ammeter_br, ammeter_yb, ammeter_ry, ammeter_rn, ammeter_yn, ammeter_bn, ammeter_description, fk_report_ammeter_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                body.ammeter_br ?? null,
+                body.ammeter_yb ?? null,
+                body.ammeter_ry ?? null,
+                body.ammeter_rn ?? null,
+                body.ammeter_yn ?? null,
+                body.ammeter_bn ?? null,
+                body.ammeter_description ?? null,
+                reportId
+            ]
+        );
+
+        // 8️⃣ Battery Charger
+        await connection.execute(
+            `INSERT INTO battery_charger 
+                (battery_charger_condition, battery_charger_br, battery_charger_yb, battery_charger_ry, 
+                 battery_charger_rn, battery_charger_yn, battery_charger_bn, battery_charger_description, fk_report_battery_charger_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                body.battery_charger_condition ?? null,
+                body.battery_charger_br ?? null,
+                body.battery_charger_yb ?? null,
+                body.battery_charger_ry ?? null,
+                body.battery_charger_rn ?? null,
+                body.battery_charger_yn ?? null,
+                body.battery_charger_bn ?? null,
+                body.battery_charger_description ?? null,
+                reportId
+            ]
+        );
+
+        // 9️⃣ ECU
+        await connection.execute(
+            `INSERT INTO ecu (ecu_condition, ecu_description, fk_report_ecu_id)
+             VALUES (?, ?, ?)`,
+            [
+                body.ecu_condition ?? null,
+                body.ecu_description ?? null,
+                reportId
+            ]
+        );
+
+        // 🔟 Battery
+        await connection.execute(
+            `INSERT INTO battery (battery_condition, battery_description, fk_report_battery_id)
+             VALUES (?, ?, ?)`,
+            [
+                body.battery_condition ?? null,
+                body.battery_description ?? null,
+                reportId
+            ]
+        );
+
+        // ✅ Commit transaksi
+        await connection.commit();
+        connection.release();
+
+        return { success: true, reportId };
+
+    } catch (error) {
+        await connection.rollback();
+        connection.release();
+        throw error;
+    }
 };
+
 
 module.exports = {
     getAllReport,
