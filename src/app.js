@@ -8,14 +8,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(middlewareLogRequest);
 
-app.use('/assets', express.static('public/images'))
-
 app.get('/ping', (req, res) => {
     res.status(200).send('pong');
 });
 
-
 app.use(router);
+
+app.use('/assets', express.static('public/images'))
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -26,6 +25,5 @@ app.use((err, req, res, next) => {
         error: err.message || err
     });
 });
-
 
 module.exports = app
