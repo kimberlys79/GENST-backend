@@ -4,6 +4,7 @@ const getAllReport = () => {
     const sqlQuery = `
     SELECT 
             report.report_id,
+            report.date_time
             user.name ,
             user.badge_number,
             user.email,
@@ -33,6 +34,7 @@ const getReportDetail = (idReport) => {
     const sqlQuery = `
     SELECT 
         report.report_id,
+        report.date_time,
             user.name AS name,
             user.badge_number,
             user.email,
@@ -48,7 +50,8 @@ const getReportDetail = (idReport) => {
             report.inspector_sign,
             report.week_maintenance_by_mem,
             report.fk_user_report_id,
-            report.fk_generator_report_id
+            report.fk_generator_report_id,
+            date_time
         FROM report
         JOIN user ON report.fk_user_report_id = user.user_id
         JOIN generator ON report.fk_generator_report_id = generator.generator_id
@@ -68,7 +71,7 @@ const createNewReport = async (body) => {
         const [reportResult] = await connection.execute(
             `INSERT INTO report 
                 (fuel_generator, radiator_water, fuel_pump, upload_photo, generator_safe_to_operate, 
-                 overall_condition, inspector_sign, week_maintenance_by_mem, fk_user_report_id, fk_generator_report_id)
+                 overall_condition, inspector_sign, week_maintenance_by_mem, fk_user_report_id, fk_generator_report_id, date_time)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 body.fuel_generator ?? null,
@@ -80,7 +83,8 @@ const createNewReport = async (body) => {
                 body.inspector_sign ?? null,
                 Number.isInteger(Number(body.week_maintenance_by_mem)) ? Number(body.week_maintenance_by_mem) : null,
                 body.fk_user_report_id ?? null,
-                body.fk_generator_report_id ?? null
+                body.fk_generator_report_id ?? null,
+                new Date()
             ]
         );
 
