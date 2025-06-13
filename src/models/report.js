@@ -24,7 +24,7 @@ const getAllReport = () => {
         FROM report
         JOIN user ON report.fk_user_report_id = user.user_id
         JOIN generator ON report.fk_generator_report_id = generator.generator_id
-    
+        ORDER BY report.date_time DESC
     `;
 
     return dbPool.execute(sqlQuery);

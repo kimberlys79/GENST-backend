@@ -1,7 +1,8 @@
 const dbPool = require('../config/database');
 
 const getAllNotification = () => {
-    const sqlQuery = 'SELECT * FROM notification'
+    const sqlQuery = `SELECT * FROM notification
+    ORDER BY notification_id DESC`
 
     return dbPool.execute(sqlQuery)
 }
