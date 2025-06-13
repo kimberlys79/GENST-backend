@@ -1,7 +1,7 @@
 const dbPool = require('../config/database');
 
 const getAllUser = () => {
-    const SQLQuery = 'SELECT * FROM user';
+    const SQLQuery = 'SELECT * FROM user'
     
     return dbPool.execute(SQLQuery)
 }
@@ -16,20 +16,20 @@ const createNewUser = (body) => {
     const SQLQuery = `INSERT INTO user (name, badge_number, email, password) 
     VALUES ('${body.name}', '${body.badge_number}', '${body.email}', '${body.password}')`
 
-    return dbPool.execute(SQLQuery);                    
+    return dbPool.execute(SQLQuery)              
 }
 
 
 const updateUser = (body, id) => {
     const fields = Object.keys(body).map(key => `${key}='${body[key]}'`).join(', ')
-    const SQLQuery = `UPDATE user SET ${fields} WHERE user_id= ${id} `;
-    return dbPool.execute(SQLQuery);                    
+    const SQLQuery = `UPDATE user SET ${fields} WHERE user_id= ${id} `
+    return dbPool.execute(SQLQuery)                  
 }
 
 const deleteUser = (id) => {
-    const SQLQuery = `DELETE FROM user WHERE user_id=${id}`;
+    const SQLQuery = `DELETE FROM user WHERE user_id=${id}`
 
-    return dbPool.execute(SQLQuery);
+    return dbPool.execute(SQLQuery)
 }
 
 const authentication = (email) => {
@@ -39,9 +39,9 @@ const authentication = (email) => {
 }
 
 const findUserByEmail = async(email) => { 
-    const query = `SELECT * FROM user WHERE email = '${email}'`;
+    const query = `SELECT * FROM user WHERE email = '${email}'`
     
-    return dbPool.execute(query); 
+    return dbPool.execute(query)
 };
 
 module.exports = {
