@@ -3,28 +3,14 @@ const dbPool = require('../config/database');
 const getAllReport = () => {
     const sqlQuery = `
     SELECT 
-            report.report_id,
-            report.date_time,
-            user.name ,
-            user.badge_number,
-            user.email,
-            generator.generator_name,
-            generator.generator_code,
-            generator.power,
-            report.fuel_generator,
-            report.radiator_water,
-            report.fuel_pump,
-            report.upload_photo,
-            report.generator_safe_to_operate,
-            report.overall_condition,
-            report.inspector_sign,
-            report.week_maintenance_by_mem,
-            report.fk_user_report_id,
-            report.fk_generator_report_id
-        FROM report
-        JOIN user ON report.fk_user_report_id = user.user_id
-        JOIN generator ON report.fk_generator_report_id = generator.generator_id
-        ORDER BY report.date_time DESC
+        user.name AS inspector_name,             
+        generator.generator_code,                 
+        CONCAT(generator.generator_name, ' - ', generator.power) AS generator_type, 
+        report.date_time AS report_date           
+            FROM report
+            JOIN user ON report.fk_user_report_id = user.user_id
+            JOIN generator ON report.fk_generator_report_id = generator.generator_id
+            ORDER BY report.date_time DESC
     `;
 
     return dbPool.execute(sqlQuery);
