@@ -33,11 +33,15 @@ const createNewReport = async (req, res) => {
     const files = req.files;
 
     if (files?.upload_photo?.[0]) {
-        body.upload_photo = files.upload_photo[0].filename;
+        body.upload_photo = files.upload_photo[0].filename
     }
 
     if (files?.inspector_sign?.[0]) {
-        body.inspector_sign = files.inspector_sign[0].filename;
+        body.inspector_sign = files.inspector_sign[0].filename
+    }
+
+    if (files?.report_pdf?.[0]) {
+    body.report_pdf = files.report_pdf[0].filename
     }
 
     console.log('Final Request Body: ', body);

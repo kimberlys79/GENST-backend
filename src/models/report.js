@@ -69,7 +69,7 @@ const createNewReport = async (body) => {
                 body.overall_condition ?? null,
                 body.inspector_sign ?? null,
                 body.week_maintenance_by_mem ?? null,
-                body.report_pdf,
+                body.report_pdf ?? null,
                 body.fk_user_report_id ?? null,
                 body.fk_generator_report_id ?? null
             ]
