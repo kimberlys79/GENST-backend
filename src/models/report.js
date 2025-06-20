@@ -66,7 +66,7 @@ const createNewReport = async (body) => {
                 body.generator_safe_to_operate ?? null,
                 body.overall_condition ?? null,
                 body.inspector_sign ?? null,
-                Number.isInteger(Number(body.week_maintenance_by_mem)) ? Number(body.week_maintenance_by_mem) : null,
+                body.week_maintenance_by_mem ?? null,
                 body.fk_user_report_id ?? null,
                 body.fk_generator_report_id ?? null
             ]
