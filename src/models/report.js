@@ -4,7 +4,8 @@ const getAllReport = () => {
     const sqlQuery = `
     SELECT 
         user.name AS inspector_name,             
-        generator.generator_code,                 
+        generator.generator_code,
+        report.report_pdf,                 
         CONCAT(generator.generator_name, ' - ', generator.power) AS generator_type, 
         report.date_time AS report_date           
             FROM report
@@ -35,6 +36,7 @@ const getReportDetail = (idReport) => {
         report.overall_condition,
         report.inspector_sign,
         report.week_maintenance_by_mem,
+        report.report_pdf,
         report.fk_user_report_id,
         report.fk_generator_report_id
         FROM report
@@ -56,8 +58,8 @@ const createNewReport = async (body) => {
         const [reportResult] = await connection.execute(
             `INSERT INTO report 
                 (fuel_generator, radiator_water, fuel_pump, upload_photo, generator_safe_to_operate, 
-                 overall_condition, inspector_sign, week_maintenance_by_mem, fk_user_report_id, fk_generator_report_id)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                 overall_condition, inspector_sign, week_maintenance_by_mem, report_pdf, fk_user_report_id, fk_generator_report_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 body.fuel_generator ?? null,
                 body.radiator_water ?? null,
@@ -67,6 +69,7 @@ const createNewReport = async (body) => {
                 body.overall_condition ?? null,
                 body.inspector_sign ?? null,
                 body.week_maintenance_by_mem ?? null,
+                body.report_pdf,
                 body.fk_user_report_id ?? null,
                 body.fk_generator_report_id ?? null
             ]

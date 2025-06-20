@@ -7,7 +7,8 @@ router.post(
     '/add',
     upload.fields([
       { name: 'upload_photo', maxCount: 1 },
-      { name: 'inspector_sign', maxCount: 1 }
+      { name: 'inspector_sign', maxCount: 1 },
+      { name: 'report_pdf', maxCount: 1 }
     ]),
     reportController.createNewReport
   );
