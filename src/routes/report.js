@@ -5,13 +5,9 @@ const upload = require('../middleware/multer');
 
 router.post(
     '/add',
-    upload.fields([
-      { name: 'upload_photo', maxCount: 1 },
-      { name: 'inspector_sign', maxCount: 1 },
-      { name: 'report_pdf', maxCount: 1 }
-    ]),
+    upload.middleware,
     reportController.createNewReport
-  );
+);
   
 router.get('/', reportController.getAllReport);
 router.get('/:id', reportController.getReportDetail);
