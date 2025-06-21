@@ -2,8 +2,12 @@ const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
-    destination: (req,  file, cb) => {
-        cb(null, 'public/images');
+    destination: (req, file, cb) => {
+        if (file.fieldname === 'report_pdf') {
+            cb(null, 'public/uploads/pdf');  // simpan PDF di sini
+        } else {
+            cb(null, 'public/images');       // image tetap di sini
+        }
     },
     filename: (req, file, cb) => {
         const timestamp = Date.now();
