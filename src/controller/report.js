@@ -6,21 +6,23 @@ const path = require('path');
 const getAllReport = async (req, res) => {
     try {
         const [data] = await reportModel.getAllReport();
+
         if ([data] == null) {
             response(404, {error: "Report Not Found"}, res)
         }
-        
-        // Inject Buffer PDF ke response
-        const reportsWithPdf = data.map(report => {
-            const pdfBuffer = getPdfBuffer(report.report_pdf);
 
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+        
+        const reportsWithUrl = data.map(report => {
             return {
                 ...report,
-                report_pdf: pdfBuffer
+                report_pdf_url: report.report_pdf 
+                    ? `${baseUrl}/uploads/pdf/${report.report_pdf}`
+                    : null
             };
         });
 
-        response(200, { report: reportsWithPdf }, 'GET All Report Success', res);
+        response(200, { report: reportsWithUrl }, 'GET All Report Success', res);
     } catch (error) {
         response(500, { error: error }, 'Server Error', res);
         throw error;
@@ -55,10 +57,15 @@ const getReportDetail = async (req, res) => {
             return response(404, { error: "Report Not Found" }, 'Data not found', res);
         }
 
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+
         const reportDetail = {
             ...data[0],
-            report_pdf: getPdfBuffer(data[0].report_pdf)
+            report_pdf_url: data[0].report_pdf
+                ? `${baseUrl}/uploads/pdf/${data[0].report_pdf}`
+                : null
         };
+        
         response(200, { reportDetail: reportDetail  }, 'GET Report Detail Success', res);
     } catch (error) {
         response(500, { error: error }, 'Server Error', res);
