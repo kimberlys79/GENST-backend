@@ -8,21 +8,16 @@ const imageDir = 'public/uploads/images/';
 if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir, { recursive: true });
 if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
 
-// Storage untuk image
-const imageStorage = multer.diskStorage({
+// Dynamic storage
+const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, imageDir);
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + file.originalname;
-        cb(null, uniqueSuffix);
-    }
-});
-
-// Storage untuk PDF
-const pdfStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, pdfDir);
+        if (file.fieldname === 'report_pdf') {
+            cb(null, pdfDir);
+        } else if (file.fieldname === 'upload_photo' || file.fieldname === 'inspector_sign') {
+            cb(null, imageDir);
+        } else {
+            cb(new Error('Unsupported fieldname: ' + file.fieldname), false);
+        }
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + file.originalname;
@@ -31,34 +26,18 @@ const pdfStorage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedImage = ['upload_photo', 'inspector_sign'];
-    const allowedPdf = ['report_pdf'];
+    const allowedFields = ['upload_photo', 'inspector_sign', 'report_pdf'];
 
-    if (allowedImage.includes(file.fieldname) || allowedPdf.includes(file.fieldname)) {
+    if (allowedFields.includes(file.fieldname)) {
         cb(null, true);
     } else {
-        cb(new Error('Unsupported file'), false);
+        cb(new Error('Unsupported file field: ' + file.fieldname), false);
     }
 };
 
-// Buat dua multer
-const uploadImage = multer({ storage: imageStorage, fileFilter });
-const uploadPdf = multer({ storage: pdfStorage, fileFilter });
-
-// Gabungkan
-const upload = multer();
-upload.fieldsUpload = [
-    { name: 'upload_photo', maxCount: 1 },
-    { name: 'inspector_sign', maxCount: 1 },
-    { name: 'report_pdf', maxCount: 1 }
-];
-
-upload.middleware = [
-    uploadImage.fields([
-        { name: 'upload_photo', maxCount: 1 },
-        { name: 'inspector_sign', maxCount: 1 }
-    ]),
-    uploadPdf.fields([{ name: 'report_pdf', maxCount: 1 }])
-];
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter
+});
 
 module.exports = upload;
